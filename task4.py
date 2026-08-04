@@ -6,10 +6,19 @@ special = ["!", "@", "#", "$", "%", "&", "*", "?", "_"]
 
 ###### OPTION 1
 lenn = int(input("Enter password length: "))
-user = " "
-for letter in range(lenn):
-    user += random.choice([str(random.choice(range(10))), random.choice(special), random.choice(lower), random.choice(upper)])
-print(user)
+response = 1
+while response:
+    user = " "
+    for letter in range(lenn):
+        user += random.choice([str(random.choice(range(10))), random.choice(special), random.choice(lower), random.choice(upper)])
+    print(user)
+    respo = input("satisfied? (y/n): ")
+    if respo == "y" or respo =="Y":
+        response = 0
+    elif respo == "n" or respo == "N":
+        continue
+    else:
+        response = 0
 
 ###### OPTION 2
 res = {"upperr": 0, "lowerr": 0, "speciall": 0, "numberr": 0}
@@ -39,5 +48,4 @@ elif fail == 1:
     print("Password Strength: Strong")
 elif fail == 0:
     print("Password Strength: Very strong")
-
-    
+  
