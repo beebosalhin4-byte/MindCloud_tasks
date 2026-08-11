@@ -64,7 +64,6 @@ while yy:
         continue
     passs2 = input("Enter another password: ")
     listt = check(passs2)
-    print(listt)
     for i in listt:
         if i != "number":
             passs2 += random.choice(globals()[i])
