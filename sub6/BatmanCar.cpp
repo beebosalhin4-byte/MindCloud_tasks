@@ -18,8 +18,8 @@ unsigned long currentTime;
 unsigned long ClastBuzzerToggle = 0;
 unsigned long lastBuzzerToggle = 0;
 
-const long buzzerInterval = 150;
-const long CbuzzerInterval = 100;
+const long buzzerInterval = 50;
+const long CbuzzerInterval = 50;
 
 bool buzzerState = false;
 
@@ -148,35 +148,26 @@ void loop()
   currentTime  = millis();
   distannce = dis();
   tempp = Temp();
-
-   if (distannce != lastDist || tempp != lastTemp) {
-    lcdNotice(tempp, distannce);
-    lastDist = distannce;
-    lastTemp = tempp;
-  }
-  
+  lcdNotice(tempp, distannce);  
   
   if (distannce < 80) {
     if (currentTime - ClastBuzzerToggle >= CbuzzerInterval) {
       ClastBuzzerToggle = currentTime;
       buzzerState = !buzzerState;
-      if (buzzerState) digitalWrite(buzz, HIGH);
-      else {digitalWrite(buzz, LOW);
-    buzzerState = false;
+      if (buzzerState) tone(buzz, 700);
+      else {noTone(buzz);
     }
     }
   } else if (distannce <= 200) {
     if (currentTime - lastBuzzerToggle >= buzzerInterval) {
       lastBuzzerToggle = currentTime;
       buzzerState = !buzzerState;
-      if (buzzerState) digitalWrite(buzz, HIGH);
-      else {digitalWrite(buzz, LOW);
-    buzzerState = false;
+      if (buzzerState) tone(buzz, 500);
+      else {noTone(buzz);
     }
     }
   } else {
-    digitalWrite(buzz, LOW);
-    buzzerState = false;
+    noTone(buzz);
   }
   Serial.println(currentTime);
 }
