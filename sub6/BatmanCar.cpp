@@ -11,16 +11,15 @@ int buzz = 3;
 int m1In3 = 5;
 int m2In4 = 6;
 int currentServoAngle;
-
+int lastDist = -1;
+int lastTemp = -1;
 
 unsigned long currentTime;
 unsigned long ClastBuzzerToggle = 0;
 unsigned long lastBuzzerToggle = 0;
-//unsigned long lastLCDUpdate = 0;
 
-//const long lcdInterval = 50;
-const long buzzerInterval = 500;
-const long CbuzzerInterval = 250;
+const long buzzerInterval = 150;
+const long CbuzzerInterval = 100;
 
 bool buzzerState = false;
 
@@ -141,6 +140,7 @@ void setup()
   lcd.begin(16, 2);
   Serial.begin(9600); 
   myServo.write(0);
+  
 }
 
 void loop()
@@ -148,10 +148,13 @@ void loop()
   currentTime  = millis();
   distannce = dis();
   tempp = Temp();
-  //if (currentTime - lastLCDUpdate >= lcdInterval) {
-    //lastLCDUpdate = currentTime;
+
+   if (distannce != lastDist || tempp != lastTemp) {
     lcdNotice(tempp, distannce);
-  //}
+    lastDist = distannce;
+    lastTemp = tempp;
+  }
+  
   
   if (distannce < 80) {
     if (currentTime - ClastBuzzerToggle >= CbuzzerInterval) {
