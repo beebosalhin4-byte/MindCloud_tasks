@@ -12,7 +12,7 @@ import time
 # it records an audio file os length 3 min, removes back-noise, and saves it and its original copy locally
 # note: that only occurs once. In other words, the whole script will need to be re-runned to check for a new 3-min recording ######################
 
-def process_and_save_audio(output_filename="after noise removal.wav", duration=60*3, sr=16000):
+def process_and_save_audio(output_filename="after noise removal.wav", duration=60, sr=16000):
     """
     Captures mic input, removes background noise, runs VAD, 
     and saves the result to a WAV audio file on disk.
@@ -30,7 +30,7 @@ def process_and_save_audio(output_filename="after noise removal.wav", duration=6
     # Flatten audio matrix to 1D vector
     raw_audio = np.squeeze(raw_audio)
 
-###################if you wanna upload the file instead of recording, comment the previous, and uncomment the next
+    ##################if you wanna upload the file instead of recording, comment the previous, and uncomment the next
     #try:
     #    raw_audio, _ = librosa.load(r"C:\Users\Habib\Downloads\how-to-settle-an-overtired-fussy-or-colicky-baby-2-aqvs-4.wav", sr=sr, mono=True)
     #except FileNotFoundError:
@@ -67,10 +67,10 @@ def process_and_save_audio(output_filename="after noise removal.wav", duration=6
     # 4. Save to Audio File (.wav)
     print("Finalizing output...")
     if is_cry_detected:
-        sf.write("original1.wav", raw_audio,sr)
-        sf.write("after noise removal1.wav", clean_audio, sr)
-        print(f"SUCCESS: Voice/Cry detected! Cleaned audio file saved to '{output_filename}'")
-        return output_filename
+        #sf.write("original1.wav", raw_audio,sr)
+        #sf.write("after noise removal1.wav", clean_audio, sr)
+        #print(f"SUCCESS: Voice/Cry detected! Cleaned audio file saved to '{output_filename}'")
+        return clean_audio
     else:
         print("NOTICE: No voice/cry detected in sample. Skipping WAV file saving.")
         return None
@@ -88,10 +88,20 @@ def is_cry_detected(duration=0.03, sr=16000):
 
     return vad.is_speech(pcm_bytes, sr)
 
-while not is_cry_detected():
-    print("No noise detected")
-    time.sleep(0.01)
-    continue
-print("System initializing...")
-saved_filepath = process_and_save_audio()
-print("Pipeline execution complete!")
+def go(timeout_seconds=60*3): # Added a timeout parameter (e.g., 60 seconds)
+    start_time = time.time()
+    
+    while not is_cry_detected():
+        # Check if the total elapsed time has exceeded our limit
+        elapsed_time = time.time() - start_time
+        if elapsed_time > timeout_seconds:
+            print(f"Timeout reached ({timeout_seconds}s) with no audio detected. Exiting loop.")
+            return None # Return None so your pipeline knows no audio was recorded
+            
+        print("No noise detected")
+        time.sleep(0.01)
+        
+    print("System initializing...")
+    file = process_and_save_audio()
+    print("Pipeline execution complete!")
+    return file
